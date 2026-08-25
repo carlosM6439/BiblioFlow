@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="BiblioFlow.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:BiblioFlow.Mobile"
+    Shell.FlyoutBehavior="Disabled"
+    Title="BiblioFlow">
+
+    <TabBar>
+        <!-- Pestaña 1: Catálogo Principal -->
+        <Tab Title="Catálogo" Icon="dotnet_bot.png">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
+        </Tab>
+
+        <!-- Pestaña 2: Libros en Préstamo -->
+        <Tab Title="Mis Préstamos" Icon="dotnet_bot.png">
+            <ShellContent ContentTemplate="{DataTemplate local:PrestamosPage}" Route="PrestamosPage" />
+        </Tab>
+
+        <!-- Pestaña 3: Perfil, QR y Cerrar Sesión -->
+        <Tab Title="Mi Perfil / QR" Icon="dotnet_bot.png">
+            <ShellContent ContentTemplate="{DataTemplate local:PerfilPage}" Route="PerfilPage" />
+        </Tab>
+    </TabBar>
+
+</Shell>

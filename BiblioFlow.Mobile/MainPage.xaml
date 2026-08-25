@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BiblioFlow.Mobile.MainPage"
+             Title="BiblioFlow - Catálogo"
+             BackgroundColor="#F1F5F9">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <!-- HEADER CON SALUDO Y USUARIO -->
+        <Frame Grid.Row="0" 
+               BackgroundColor="#1E3A8A" 
+               CornerRadius="0" 
+               HasShadow="True" 
+               Padding="20,15">
+            <Grid ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="BiblioFlow 📚" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                    <Label x:Name="UserGreetingLabel" Text="Usuario: Carlos Mendoza" FontSize="13" TextColor="#93C5FD" />
+                </VerticalStackLayout>
+
+                <Button Grid.Column="1" 
+                        Text="Mi Perfil / Login" 
+                        BackgroundColor="#0D9488" 
+                        TextColor="White" 
+                        FontSize="12"
+                        CornerRadius="6"
+                        Clicked="OnPerfilClicked"/>
+            </Grid>
+        </Frame>
+
+        <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+        <VerticalStackLayout Grid.Row="1" Padding="15,10" Spacing="10">
+            <SearchBar x:Name="LibrosSearchBar"
+                       Placeholder="Buscar por título, autor o ISBN..."
+                       PlaceholderColor="#94A3B8"
+                       BackgroundColor="White"
+                       TextColor="#0F172A"
+                       SearchButtonPressed="OnBuscarLibroPressed"
+                       TextChanged="OnBuscarTextChanged"/>
+
+            <FlexLayout JustifyContent="SpaceBetween" AlignItems="Center">
+                <Label Text="Resultados del catálogo" FontSize="15" FontAttributes="Bold" TextColor="#1E293B" />
+                <Button Text="🔄 Recargar Lista" 
+                        FontSize="12" 
+                        BackgroundColor="Transparent" 
+                        TextColor="#0D9488" 
+                        Clicked="OnRecargarClicked" />
+            </FlexLayout>
+        </VerticalStackLayout>
+
+        <!-- LISTA DE LIBROS -->
+        <RefreshView Grid.Row="2" x:Name="MainRefreshView" Refreshing="OnRefreshRequested">
+            <CollectionView x:Name="LibrosCollectionView" EmptyView="No se encontraron libros disponibles o la API no está respondiendo.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="15,6" 
+                               Padding="15" 
+                               CornerRadius="12" 
+                               BackgroundColor="White" 
+                               HasShadow="True"
+                               BorderColor="#E2E8F0">
+
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto">
+
+                                <!-- Título y Autor -->
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                    <Label Text="{Binding Titulo}" FontSize="16" FontAttributes="Bold" TextColor="#1E3A8A" />
+                                    <Label Text="{Binding Autor}" FontSize="14" TextColor="#64748B" />
+                                </VerticalStackLayout>
+
+                                <!-- Badge de Categoría -->
+                                <Frame Grid.Row="0" Grid.Column="1" 
+                                       BackgroundColor="#EFF6FF" 
+                                       CornerRadius="6" 
+                                       Padding="8,4" 
+                                       HasShadow="False"
+                                       BorderColor="Transparent">
+                                    <Label Text="{Binding Categoria}" FontSize="11" TextColor="#2563EB" FontAttributes="Bold" />
+                                </Frame>
+
+                                <!-- Detalle de Ubicación -->
+                                <Label Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0"
+                                       Text="{Binding UbicacionEstante, StringFormat='📍 Ubicación: {0}'}" 
+                                       FontSize="13" TextColor="#475569" FontAttributes="Bold" />
+
+                                <!-- Estado de Disponibilidad -->
+                                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5,0,10" ColumnDefinitions="*, *">
+                                    <Label Grid.Column="0" 
+                                           Text="{Binding StockDisponible, StringFormat='Disponibles: {0}'}" 
+                                           FontSize="13" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#16A34A" />
+                                    <Label Grid.Column="1" 
+                                           Text="{Binding ISBN, StringFormat='ISBN: {0}'}" 
+                                           HorizontalOptions="End" 
+                                           FontSize="11" 
+                                           TextColor="#94A3B8" />
+                                </Grid>
+
+                                <!-- Botón para Apartar / Reservar -->
+                                <Button Grid.Row="3" Grid.ColumnSpan="2" 
+                                        Text="📌 Reservar / Apartar Ejemplar" 
+                                        BackgroundColor="#0D9488" 
+                                        TextColor="White" 
+                                        FontAttributes="Bold" 
+                                        CornerRadius="8" 
+                                        HeightRequest="42"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnReservarBookClicked" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

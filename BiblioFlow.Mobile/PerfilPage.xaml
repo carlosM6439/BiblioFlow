@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BiblioFlow.Mobile.PerfilPage"
+             Title="Mi Perfil y Credencial"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
+
+            <!-- Tarjeta de Usuario -->
+            <Frame BackgroundColor="#1E3A8A" CornerRadius="15" Padding="20" WidthRequest="320">
+                <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                    <Label Text="👤" FontSize="40" HorizontalOptions="Center" />
+                    <Label Text="Carlos Mendoza" FontSize="20" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+                    <Label Text="Ingeniería en Sistemas Computacionales" FontSize="12" TextColor="#93C5FD" HorizontalOptions="Center" />
+                    <Label Text="Matrícula: 20240001" FontSize="12" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,5,0,0"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Sección de Código QR -->
+            <Frame BackgroundColor="White" CornerRadius="15" Padding="20" HasShadow="True" WidthRequest="320">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Label Text="Credencial Digital / Código QR" FontSize="15" FontAttributes="Bold" TextColor="#1E293B" HorizontalOptions="Center" />
+                    <Label Text="Muestra este código en el mostrador para recoger libros o registrarlos." FontSize="11" TextColor="#64748B" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+
+                    <!-- Simulación visual de Código QR generado dinámicamente -->
+                    <Image Source="https://api.qrserver.com/v1/create-qr-code/?size=180x180&amp;data=BIBLIOFLOW-USER-20240001" 
+                           HeightRequest="180" 
+                           WidthRequest="180" 
+                           HorizontalOptions="Center" />
+
+                    <Label Text="ID: QR-8829-20240001" FontSize="11" TextColor="#94A3B8" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Botón de Cerrar Sesión -->
+            <Button Text="🚪 Cerrar Sesión" 
+                    BackgroundColor="#DC2626" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    CornerRadius="10" 
+                    HeightRequest="48"
+                    WidthRequest="320"
+                    Clicked="OnCerrarSesionClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
