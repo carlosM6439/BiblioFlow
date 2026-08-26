@@ -6,6 +6,7 @@ namespace BiblioFlow.Mobile.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
+        private const string BaseUrl = "http://10.0.2.2:5158/api/libros";
 
         public ApiService()
         {
@@ -16,17 +17,39 @@ namespace BiblioFlow.Mobile.Services
         {
             try
             {
-                // En el emulador de Android se usa 10.0.2.2 para hacer referencia al localhost de la PC
-                // Cambia 5158 por el puerto HTTP que te dio tu consola de la API
-                string url = "http://10.0.2.2:5158/api/libros";
-
-                var libros = await _httpClient.GetFromJsonAsync<List<Libro>>(url);
+                var libros = await _httpClient.GetFromJsonAsync<List<Libro>>(BaseUrl);
                 return libros ?? new List<Libro>();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al conectar a la API: {ex.Message}");
+                Console.WriteLine($"Error al consultar API: {ex.Message}");
                 return new List<Libro>();
+            }
+        }
+
+        public async Task<bool> ReservarLibroAsync(int libroId)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsync($"{BaseUrl}/reservar/{libroId}", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DevolverLibroAsync(int libroId)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsync($"{BaseUrl}/devolver/{libroId}", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

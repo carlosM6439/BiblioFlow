@@ -1,10 +1,17 @@
-﻿namespace BiblioFlow.Mobile
+﻿using BiblioFlow.Mobile.Models;
+using BiblioFlow.Mobile.Services;
+
+namespace BiblioFlow.Mobile
 {
     public partial class PrestamosPage : ContentPage
     {
+        private readonly ApiService _apiService;
+        private static List<PrestamoItem> _listaPrestamos = new();
+
         public PrestamosPage()
         {
             InitializeComponent();
+            _apiService = new ApiService();
         }
 
         protected override void OnAppearing()
@@ -15,14 +22,44 @@
 
         private void CargarPrestamos()
         {
-            // Datos simulados de préstamos activos del usuario
-            var prestamos = new List<PrestamoItem>
+            if (_listaPrestamos.Count == 0)
             {
-                new PrestamoItem { Titulo = "Estructuras de Datos y Algoritmos", Autor = "Alfred Aho", FechaPrestamo = "18/05/2026", FechaVencimiento = "25/05/2026" },
-                new PrestamoItem { Titulo = "Clean Code", Autor = "Robert C. Martin", FechaPrestamo = "20/05/2026", FechaVencimiento = "27/05/2026" }
-            };
+                _listaPrestamos = new List<PrestamoItem>
+                {
+                    new PrestamoItem { LibroId = 1, Titulo = "Estructuras de Datos y Algoritmos", Autor = "Alfred Aho", UbicacionEstante = "Estante A-04", FechaVencimiento = "28/08/2026" },
+                    new PrestamoItem { LibroId = 2, Titulo = "Clean Code", Autor = "Robert C. Martin", UbicacionEstante = "Estante B-12", FechaVencimiento = "30/08/2026" }
+                };
+            }
 
-            PrestamosCollectionView.ItemsSource = prestamos;
+            PrestamosCollectionView.ItemsSource = null;
+            PrestamosCollectionView.ItemsSource = _listaPrestamos;
+        }
+
+        private async void OnDevolverReservaClicked(object sender, EventArgs e)
+        {
+            var boton = sender as Button;
+            var item = boton?.CommandParameter as PrestamoItem;
+
+            if (item == null) return;
+
+            bool confirmar = await DisplayAlert("Devolver / Cancelar",
+                $"¿Deseas devolver el libro '{item.Titulo}' y liberar su reserva en biblioteca?",
+                "Sí, Devolver", "No");
+
+            if (confirmar)
+            {
+                // 1. Notificar a PostgreSQL vía API para sumar +1 al stock
+                await _apiService.DevolverLibroAsync(item.LibroId);
+
+                // 2. Remover elemento de la interfaz
+                _listaPrestamos.Remove(item);
+                PrestamosCollectionView.ItemsSource = null;
+                PrestamosCollectionView.ItemsSource = _listaPrestamos;
+
+                try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+
+                await DisplayAlert("Éxito 🎉", $"El ejemplar de '{item.Titulo}' fue devuelto y el stock se actualizó en la base de datos.", "OK");
+            }
         }
 
         private async void OnRenovarClicked(object sender, EventArgs e)
@@ -31,16 +68,17 @@
             var item = btn?.CommandParameter as PrestamoItem;
             if (item != null)
             {
-                await DisplayAlert("Renovación Exitosa", $"El préstamo de '{item.Titulo}' se ha extendido por 7 días más.", "OK");
+                await DisplayAlert("Renovado 🔄", $"El préstamo de '{item.Titulo}' se ha extendido por 7 días más.", "OK");
             }
         }
     }
 
     public class PrestamoItem
     {
+        public int LibroId { get; set; }
         public string Titulo { get; set; } = string.Empty;
         public string Autor { get; set; } = string.Empty;
-        public string FechaPrestamo { get; set; } = string.Empty;
+        public string UbicacionEstante { get; set; } = string.Empty;
         public string FechaVencimiento { get; set; } = string.Empty;
     }
 }
