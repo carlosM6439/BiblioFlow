@@ -6,13 +6,14 @@ namespace BiblioFlow.Mobile.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://10.0.2.2:5158/api/libros";
+
+        // IP local de tu PC para conexión con dispositivo móvil físico
+        private const string BaseUrl = "http://192.168.100.193:5000/api/libros";
 
         public ApiService()
         {
             _httpClient = new HttpClient();
         }
-
         public async Task<List<Libro>> ObtenerLibrosAsync()
         {
             try
@@ -22,7 +23,7 @@ namespace BiblioFlow.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al consultar API: {ex.Message}");
+                Console.WriteLine($"Error al consultar libros: {ex.Message}");
                 return new List<Libro>();
             }
         }
@@ -34,8 +35,9 @@ namespace BiblioFlow.Mobile.Services
                 var response = await _httpClient.PostAsync($"{BaseUrl}/reservar/{libroId}", null);
                 return response.IsSuccessStatusCode;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error al reservar en API: {ex.Message}");
                 return false;
             }
         }
@@ -47,8 +49,9 @@ namespace BiblioFlow.Mobile.Services
                 var response = await _httpClient.PutAsync($"{BaseUrl}/devolver/{libroId}", null);
                 return response.IsSuccessStatusCode;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error al devolver en API: {ex.Message}");
                 return false;
             }
         }

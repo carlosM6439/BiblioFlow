@@ -48,17 +48,22 @@ namespace BiblioFlow.Mobile
 
             if (confirmar)
             {
-                // 1. Notificar a PostgreSQL vía API para sumar +1 al stock
-                await _apiService.DevolverLibroAsync(item.LibroId);
+                bool exitoApi = await _apiService.DevolverLibroAsync(item.LibroId);
 
-                // 2. Remover elemento de la interfaz
-                _listaPrestamos.Remove(item);
-                PrestamosCollectionView.ItemsSource = null;
-                PrestamosCollectionView.ItemsSource = _listaPrestamos;
+                if (exitoApi)
+                {
+                    _listaPrestamos.Remove(item);
+                    PrestamosCollectionView.ItemsSource = null;
+                    PrestamosCollectionView.ItemsSource = _listaPrestamos;
 
-                try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+                    try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
 
-                await DisplayAlert("Éxito 🎉", $"El ejemplar de '{item.Titulo}' fue devuelto y el stock se actualizó en la base de datos.", "OK");
+                    await DisplayAlert("Éxito 🎉", $"El ejemplar de '{item.Titulo}' fue devuelto y el stock se actualizó en PostgreSQL.", "OK");
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo actualizar la base de datos.", "OK");
+                }
             }
         }
 
