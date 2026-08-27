@@ -1,0 +1,6 @@
+@BiblioFlow.API_HostAddress = http://localhost:5158
+
+GET {{BiblioFlow.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
